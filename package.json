@@ -1,5 +1,6 @@
 {
-  "name": "cursor-projects-(lab)",
+  "type": "module",
+  "name": "cursor-projects-lab",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
