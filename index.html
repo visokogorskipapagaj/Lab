@@ -10,5 +10,21 @@
     <img src="images/designers_looking_at_their_work.jpeg" alt="Designers looking at their work">
     <h1>Hello, World!</h1>
     <p>This is a test paragraph.</p>
+    <p>Current temperature in Austin: <span id="temperature">Loading...</span></p>
+
+    <script>
+        async function getAustinTemperature() {
+            try {
+                const response = await fetch('/api/temperature');
+                const data = await response.json();
+                document.getElementById('temperature').textContent = `${data.temperature}°F`;
+            } catch (error) {
+                console.error('Error fetching temperature:', error);
+                document.getElementById('temperature').textContent = 'Unable to fetch temperature';
+            }
+        }
+
+        getAustinTemperature();
+    </script>
 </body>
 </html>
