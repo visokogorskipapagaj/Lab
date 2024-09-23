@@ -3,28 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Weather and Art</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <img src="images/designers_looking_at_their_work.jpeg" alt="Designers looking at their work">
-    <h1>Hello, World!</h1>
-    <p>This is a test paragraph.</p>
+    <h1>Weather and Art</h1>
+    <button id="refresh-btn">Refresh Data</button>
     <p>Current temperature in Austin: <span id="temperature">Loading...</span></p>
+    
+    <h2>Artwork of the Day</h2>
+    <div id="artwork">
+        <img id="artwork-image" src="https://collectionapi.metmuseum.org/public/collection/v1/objects/437133" alt="Artwork of the day">
+        <p>Title: <span id="artwork-title">Loading...</span></p>
+        <p>Artist: <span id="artwork-artist">Loading...</span></p>
+    </div>
 
     <script>
-        async function getAustinTemperature() {
-            try {
-                const response = await fetch('/api/temperature');
-                const data = await response.json();
-                document.getElementById('temperature').textContent = `${data.temperature}°F`;
-            } catch (error) {
-                console.error('Error fetching temperature:', error);
-                document.getElementById('temperature').textContent = 'Unable to fetch temperature';
-            }
+        function updateElement(id, content) {
+            document.getElementById(id).textContent = content;
         }
 
-        getAustinTemperature();
+        function fetchData(url, callback) {
+            fetch(url)
+                .then(response => response.json())
+                .then(callback)
+                .catch(error => {
+                    console.error(`Error fetching data from ${url}:`, error);
+                    updateElement(url.includes('temperature') ? 'temperature' : 'artwork', 'Unable to fetch data');
+                });
+        }
+
+        function refreshData() {
+            updateElement('temperature', 'Loading...');
+            updateElement('artwork-title', 'Loading...');
+            updateElement('artwork-artist', 'Loading...');
+            document.getElementById('artwork-image').src = '';
+
+            fetchData('/api/temperature', data => {
+                updateElement('temperature', `${data.temperature}°C`);
+            });
+
+            fetchData('/api/artwork', data => {
+                document.getElementById('artwork-image').src = data.primaryImage;
+                document.getElementById('artwork-image').alt = data.title;
+                updateElement('artwork-title', data.title);
+                updateElement('artwork-artist', data.artistDisplayName);
+            });
+        }
+
+        document.getElementById('refresh-btn').addEventListener('click', refreshData);
+
+        fetchData('/api/temperature', data => {
+            updateElement('temperature', `${data.temperature}°C`);
+        });
+
+        fetchData('/api/artwork', data => {
+            document.getElementById('artwork-image').src = data.primaryImage;
+            document.getElementById('artwork-image').alt = data.title;
+            updateElement('artwork-title', data.title);
+            updateElement('artwork-artist', data.artistDisplayName);
+        });
     </script>
 </body>
 </html>
