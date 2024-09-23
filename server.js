@@ -10,7 +10,7 @@ app.use(express.static('public'));
 app.get('/api/temperature', async (req, res) => {
     try {
         const apiKey = process.env.OPENWEATHERMAP_API_KEY;
-        const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Austin,US&units=imperial&appid=${apiKey}`);
+        const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Austin,US&units=metric&appid=${apiKey}`);
         const temperature = Math.round(response.data.main.temp);
         res.json({ temperature });
     } catch (error) {
